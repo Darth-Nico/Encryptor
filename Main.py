@@ -20,11 +20,11 @@ KEY_FILE = os.path.join(CONF_DIR, "Secret_Key.key")  # Nu als .key-bestand
 
 # Controleer of de configuratiebestanden bestaan
 if not all(os.path.exists(f) for f in [HASH_FILE, SALT_FILE, KEY_FILE]):
-    print("❌ Error: Configuratiebestanden ontbreken. Voer eerst MasterHasher.py uit.")
+    print("Error: Configuratiebestanden ontbreken. Voer eerst MasterHasher.py uit.")
     exit(1)
 
 # Vraag om het masterwachtwoord
-master_password = input("🔑 Voer je master wachtwoord in: ")
+master_password = input("Voer je master wachtwoord in: ")
 
 # Lees de opgeslagen bestanden
 with open(SALT_FILE, "rb") as f:
@@ -45,10 +45,10 @@ decrypted_hash = cipher.decrypt(encrypted_hash).decode()
 ph = PasswordHasher()
 try:
     ph.verify(decrypted_hash, master_password + salt.hex())
-    print("\n✅ Toegang verleend: Wachtwoord correct!\n")
+    print("\nToegang verleend: Wachtwoord correct!\n")
 
 except:
-    print("❌ Toegang geweigerd: Wachtwoord incorrect!")
+    print("Toegang geweigerd: Wachtwoord incorrect!")
     exit(1)
 
 # Genereer AES-256 sleutel uit masterwachtwoord
@@ -58,10 +58,10 @@ aes_key = hashlib.pbkdf2_hmac("sha256", master_password.encode(), salt, 100000, 
 def encrypt_file(file_path):
     """Versleutelt een bestand met AES-256 en slaat het op in de 'Enc' map."""
     if not os.path.exists(file_path):
-        print("❌ Fout: Bestand bestaat niet!")
+        print("Fout: Bestand bestaat niet!")
         return
     
-    print("\n⚠️ WAARSCHUWING: Dit bestand wordt versleuteld! Toegang vereist het masterwachtwoord!\n")
+    print("\nWAARSCHUWING: Dit bestand wordt versleuteld! Toegang vereist het masterwachtwoord!\n")
 
     iv = os.urandom(16)  # Initialisatievector (IV)
     cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
@@ -83,11 +83,11 @@ def encrypt_file(file_path):
     with open(encrypted_file_path, "wb") as f:
         f.write(iv + encrypted_data)
 
-    print(f"✅ Bestand versleuteld: {encrypted_file_path}")
+    print(f"Bestand versleuteld: {encrypted_file_path}")
 
     # Verwijder het originele bestand
     os.remove(file_path)
-    print(f"🗑️ Origineel bestand verwijderd: {file_path}")
+    print(f"Origineel bestand verwijderd: {file_path}")
 
 
 def decrypt_file(file_name):
@@ -95,7 +95,7 @@ def decrypt_file(file_name):
     encrypted_file_path = os.path.join(ENC_DIR, file_name + ".enc")
 
     if not os.path.exists(encrypted_file_path):
-        print("❌ Fout: Versleuteld bestand bestaat niet!")
+        print("Fout: Versleuteld bestand bestaat niet!")
         return
 
     with open(encrypted_file_path, "rb") as f:
@@ -113,10 +113,10 @@ def decrypt_file(file_name):
     with open(original_file_path, "wb") as f:
         f.write(decrypted_data)
 
-    print(f"✅ Bestand ontsleuteld: {original_file_path}")
+    print(f"Bestand ontsleuteld: {original_file_path}")
 
     os.remove(encrypted_file_path)
-    print(f"🗑️ Versleuteld bestand verwijderd: {encrypted_file_path}")
+    print(f"Versleuteld bestand verwijderd: {encrypted_file_path}")
 
 # ======================== Wachtwoordgenerator ========================
 def generate_password(length, use_uppercase, use_numbers, use_special_chars):
@@ -152,13 +152,13 @@ def check_password_strength(password):
     
     # Geef sterkte score terug
     if strength == 4:
-        return "✅ Zeer sterk", "n.v.t."  # Geen tips voor zeer sterke wachtwoorden
+        return "Zeer sterk", "n.v.t."  # Geen tips voor zeer sterke wachtwoorden
     elif strength == 3:
-        return "⚡ Sterk", get_password_tips(strength)
+        return "Sterk", get_password_tips(strength)
     elif strength == 2:
-        return "⚠️ Gemiddeld", get_password_tips(strength)
+        return "Gemiddeld", get_password_tips(strength)
     else:
-        return "❌ Zwak", get_password_tips(strength)
+        return "Zwak", get_password_tips(strength)
 
 def get_password_tips(strength):
     """Geeft tips om het wachtwoord te verbeteren op basis van de sterkte."""
@@ -176,12 +176,12 @@ def get_password_tips(strength):
 # ======================== Gebruikersmenu ========================
 def menu():
     while True:
-        print("\n🔐 MENU:")
-        print("1️⃣  Versleutel een bestand")
-        print("2️⃣  Ontsleutel een bestand")
-        print("3️⃣  Genereer een wachtwoord")
-        print("4️⃣  Controleer wachtwoordsterkte")
-        print("5️⃣  Afsluiten")
+        print("\nMENU:")
+        print("1  Versleutel een bestand")
+        print("2  Ontsleutel een bestand")
+        print("3  Genereer een wachtwoord")
+        print("4  Controleer wachtwoordsterkte")
+        print("5  Afsluiten")
 
         keuze = input("\nKies een optie (1/2/3/4/5): ")
 
@@ -200,22 +200,22 @@ def menu():
             use_special_chars = input("Gebruik speciale tekens? (y/n): ").strip().lower() == 'y'
             
             wachtwoord = generate_password(lengte, use_uppercase, use_numbers, use_special_chars)
-            print(f"✅ Genereerd wachtwoord: {wachtwoord}")
+            print(f"Genereerd wachtwoord: {wachtwoord}")
 
         elif keuze == "4":
             wachtwoord = input("Voer het wachtwoord in om de sterkte te meten: ")
             sterkte, tips = check_password_strength(wachtwoord)
-            print(f"🔐 Wachtwoordsterkte: {sterkte}")
+            print(f"Wachtwoordsterkte: {sterkte}")
             if tips != "n.v.t.":
-                print("💡 Tips om je wachtwoord te verbeteren:")
+                print("Tips om je wachtwoord te verbeteren:")
                 for tip in tips:
                     print(f"  - {tip}")
 
         elif keuze == "5":
-            print("👋 Afsluiten...")
+            print("Afsluiten...")
             exit(0)
 
         else:
-            print("❌ Ongeldige keuze, probeer opnieuw!")
+            print("Ongeldige keuze, probeer opnieuw!")
 
 menu()
