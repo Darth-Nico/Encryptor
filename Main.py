@@ -7,10 +7,17 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 import hashlib
 import re
+import subprocess
 
 CONF_DIR = "Conf"
 ENC_DIR = "Enc"
+os.makedirs(CONF_DIR, exist_ok=True)
 os.makedirs(ENC_DIR, exist_ok=True)
+
+# Maak de mappen onzichtbaar op Windows
+if os.name == "nt":
+    subprocess.call(["attrib", "+h", CONF_DIR])
+    subprocess.call(["attrib", "+h", ENC_DIR])
 
 HASH_FILE = os.path.join(CONF_DIR, "Secret_Hash.conf")
 SALT_FILE = os.path.join(CONF_DIR, "Secret_Salt.conf")

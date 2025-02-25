@@ -9,6 +9,10 @@ from cryptography.fernet import Fernet
 CONF_DIR = "Conf"
 os.makedirs(CONF_DIR, exist_ok=True)
 
+# Maak de map onzichtbaar op Windows
+if os.name == "nt":
+    subprocess.call(["attrib", "+h", CONF_DIR])
+
 HASH_FILE = os.path.join(CONF_DIR, "Secret_Hash.conf")
 SALT_FILE = os.path.join(CONF_DIR, "Secret_Salt.conf")
 KEY_FILE = os.path.join(CONF_DIR, "Secret_Key.key")
